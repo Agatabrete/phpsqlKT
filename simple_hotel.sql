@@ -1,8 +1,19 @@
--- Simple Hotel Booking Database
+-- ===============================
+-- Simple Hotel Booking Database Setup
+-- ===============================
+
+-- 1. Create database
+DROP DATABASE IF EXISTS simple_hotel;
 CREATE DATABASE simple_hotel;
 USE simple_hotel;
 
--- Users table
+-- 2. Create user (for PHP app)
+DROP USER IF EXISTS 'ajopiselg'@'localhost';
+CREATE USER 'ajopiselg'@'localhost' IDENTIFIED BY 'ajopiselg';
+GRANT ALL PRIVILEGES ON simple_hotel.* TO 'ajopiselg'@'localhost';
+FLUSH PRIVILEGES;
+
+-- 3. Tables
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -12,7 +23,6 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Rooms table
 CREATE TABLE rooms (
     id INT AUTO_INCREMENT PRIMARY KEY,
     room_number VARCHAR(10) UNIQUE NOT NULL,
@@ -22,7 +32,6 @@ CREATE TABLE rooms (
     is_available BOOLEAN DEFAULT TRUE
 );
 
--- Bookings table
 CREATE TABLE bookings (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -36,7 +45,7 @@ CREATE TABLE bookings (
     FOREIGN KEY (room_id) REFERENCES rooms(id)
 );
 
--- Insert sample data
+-- 4. Insert sample data
 INSERT INTO users (name, email, password, is_admin) VALUES
 ('Admin User', 'admin@hotel.com', 'admin123', TRUE),
 ('John Smith', 'john@email.com', 'password123', FALSE),
@@ -54,81 +63,6 @@ INSERT INTO bookings (user_id, room_id, check_in, check_out, total_price) VALUES
 (2, 1, '2024-12-20', '2024-12-23', 150.00),
 (3, 3, '2024-12-25', '2024-12-28', 300.00);
 
--- Useful queries for the system:
-
--- 1. View all available rooms
-SELECT room_number, room_type, price_per_night, description 
-FROM rooms 
-WHERE is_available = TRUE;
-
--- 2. Check room availability for specific dates
-SELECT r.room_number, r.room_type, r.price_per_night
-FROM rooms r
-WHERE r.is_available = TRUE
-AND r.id NOT IN (
-    SELECT b.room_id 
-    FROM bookings b 
-    WHERE b.status = 'confirmed'
-    AND (b.check_in <= '2024-12-25' AND b.check_out >= '2024-12-20')
-);
-
--- 3. View all bookings with user and room details
-SELECT 
-    b.id as booking_id,
-    u.name as guest_name,
-    r.room_number,
-    r.room_type,
-    b.check_in,
-    b.check_out,
-    b.total_price,
-    b.status
-FROM bookings b
-JOIN users u ON b.user_id = u.id
-JOIN rooms r ON b.room_id = r.id
-ORDER BY b.booking_date DESC;
-
--- 4. Calculate total revenue
-SELECT SUM(total_price) as total_revenue 
-FROM bookings 
-WHERE status = 'confirmed';
-
--- 5. Find most popular room type
-SELECT r.room_type, COUNT(b.id) as booking_count
-FROM rooms r
-LEFT JOIN bookings b ON r.id = b.room_id AND b.status = 'confirmed'
-GROUP BY r.room_type
-ORDER BY booking_count DESC;
-
--- 6. View bookings for a specific user
-SELECT 
-    r.room_number,
-    r.room_type,
-    b.check_in,
-    b.check_out,
-    b.total_price,
-    b.status
-FROM bookings b
-JOIN rooms r ON b.room_id = r.id
-WHERE b.user_id = 2;
-
--- 7. Admin view: All users and their booking counts
-SELECT 
-    u.name,
-    u.email,
-    COUNT(b.id) as total_bookings,
-    COALESCE(SUM(b.total_price), 0) as total_spent
-FROM users u
-LEFT JOIN bookings b ON u.id = b.user_id AND b.status = 'confirmed'
-WHERE u.is_admin = FALSE
-GROUP BY u.id, u.name, u.email;
-
--- 8. Monthly revenue report
-SELECT 
-    YEAR(booking_date) as year,
-    MONTH(booking_date) as month,
-    COUNT(id) as total_bookings,
-    SUM(total_price) as monthly_revenue
-FROM bookings 
-WHERE status = 'confirmed'
-GROUP BY YEAR(booking_date), MONTH(booking_date)
-ORDER BY year DESC, month DESC;
+-- ===============================
+-- Done! The database, user, and data are ready.
+-- ===============================
