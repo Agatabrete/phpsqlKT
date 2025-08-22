@@ -4,8 +4,8 @@ session_start();
 // Database configuration
 $host = 'localhost';
 $dbname = 'simple_hotel';
-$username = 'root'; // Change as needed
-$password = '';     // Change as needed
+$username = 'ajopiselg'; // Change as needed
+$password = 'ajopiselg';     // Change as needed
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
