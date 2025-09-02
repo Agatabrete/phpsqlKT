@@ -4,7 +4,7 @@ session_start();
 // Database configuration
 $host = 'localhost';
 $dbname = 'simple_hotel';
-$username = 'ajopiselg'; // Change as needed
+$username = 'agata'; // Change as needed
 $password = 'ajopiselg';     // Change as needed
 
 try {
