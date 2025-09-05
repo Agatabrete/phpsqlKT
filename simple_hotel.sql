@@ -8,9 +8,9 @@ CREATE DATABASE simple_hotel;
 USE simple_hotel;
 
 -- 2. Create user (for PHP app)
-DROP USER IF EXISTS 'ajopiselg'@'localhost';
-CREATE USER 'ajopiselg'@'localhost' IDENTIFIED BY 'ajopiselg';
-GRANT ALL PRIVILEGES ON simple_hotel.* TO 'ajopiselg'@'localhost';
+DROP USER IF EXISTS 'agata'@'localhost';
+CREATE USER 'agata'@'localhost' IDENTIFIED BY 'agata';
+GRANT ALL PRIVILEGES ON simple_hotel.* TO 'agata'@'localhost';
 FLUSH PRIVILEGES;
 
 -- 3. Tables
